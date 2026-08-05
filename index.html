@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>3D Voxel Quiz Game</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-gray-900 text-white font-['Inter'] overflow-hidden selection:bg-purple-500 selection:text-white">
+    <!-- Game Canvas Container -->
+    <div id="game-container" class="absolute inset-0 z-0"></div>
+
+    <!-- UI Layer -->
+    <div id="ui-layer" class="absolute inset-0 z-10 pointer-events-none flex flex-col justify-between overflow-hidden">
+      
+      <!-- Start Page -->
+      <div id="page-start" class="absolute inset-0 bg-gray-900/90 flex flex-col items-center justify-center pointer-events-auto backdrop-blur-md transition-opacity duration-300">
+        <h1 class="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 mb-2 font-['Outfit'] drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]">CYBER VOXEL</h1>
+        <h2 class="text-2xl md:text-3xl text-gray-300 mb-8 font-semibold">ESCAPE</h2>
+        <p class="text-center text-gray-400 max-w-md mb-8 text-lg px-4">หลบหนีออกจากโลกดิจิทัลโดยการตอบคำถามเพื่อปลดล็อกรหัสผ่านของระบบ!</p>
+        <div id="guest-buttons" class="flex flex-col sm:flex-row gap-4 mb-4">
+          <button id="btn-goto-login" class="px-8 py-4 bg-cyan-500 text-gray-900 font-bold rounded-lg hover:bg-cyan-400 transition-all shadow-[0_0_15px_rgba(34,211,238,0.6)] text-xl">เข้าสู่ระบบ (Login)</button>
+          <button id="btn-goto-register" class="px-8 py-4 bg-green-500 text-gray-900 font-bold rounded-lg hover:bg-green-400 transition-all shadow-[0_0_15px_rgba(34,197,94,0.6)] text-xl">สมัครสมาชิก</button>
+        </div>
+        
+        <div id="user-buttons" class="flex flex-col items-center gap-4 mb-4 hidden">
+          <p class="text-2xl text-cyan-300 font-bold mb-2">ยินดีต้อนรับ, <span id="start-welcome-name">Player</span>!</p>
+          <div class="flex flex-col sm:flex-row gap-4">
+            <button id="btn-start-game-direct" class="px-8 py-4 bg-cyan-500 text-gray-900 font-bold rounded-lg hover:bg-cyan-400 transition-all shadow-[0_0_15px_rgba(34,211,238,0.6)] text-xl">เริ่มเกม (Play)</button>
+            <button id="btn-logout" class="px-8 py-4 bg-red-600 text-white font-bold rounded-lg hover:bg-red-500 transition-all shadow-[0_0_15px_rgba(220,38,38,0.6)] text-xl">ออกจากระบบ</button>
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-4">
+          <button id="btn-goto-tutorial" class="px-8 py-4 bg-gray-700 text-white font-bold rounded-lg hover:bg-gray-600 transition-all text-xl border border-gray-600">วิธีเล่น</button>
+          <button id="btn-goto-dashboard" class="px-8 py-4 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-500 transition-all text-xl shadow-[0_0_15px_rgba(79,70,229,0.5)]">สถิติ (Dashboard)</button>
+        </div>
+      </div>
+
+      <!-- Login Page -->
+      <div id="page-login" class="absolute inset-0 bg-gray-900/90 flex flex-col items-center justify-center pointer-events-auto backdrop-blur-md transition-opacity duration-300 hidden">
+        <div class="glass-panel p-8 rounded-2xl w-11/12 max-w-md">
+          <h2 class="text-3xl font-bold text-cyan-400 mb-6 font-['Outfit'] text-center">เข้าสู่ระบบ</h2>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-gray-300 mb-1">รหัสนักเรียน/นักศึกษา (Username)</label>
+              <input type="text" id="login-id" class="w-full bg-gray-800 text-white rounded p-3 border border-gray-700 focus:border-cyan-500 focus:outline-none text-lg" placeholder="เช่น 6400001">
+            </div>
+            <div>
+              <label class="block text-gray-300 mb-1">รหัสผ่าน (Password)</label>
+              <input type="password" id="login-password" class="w-full bg-gray-800 text-white rounded p-3 border border-gray-700 focus:border-cyan-500 focus:outline-none text-lg" placeholder="********">
+            </div>
+          </div>
+          <p id="login-error" class="text-red-400 mt-4 text-center hidden">ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง!</p>
+          <div class="mt-8 flex gap-4">
+            <button id="btn-back-to-start-from-login" class="flex-1 py-3 bg-gray-700 text-white font-bold rounded hover:bg-gray-600 transition-all">กลับ</button>
+            <button id="btn-do-login" class="flex-1 py-3 bg-cyan-500 text-gray-900 font-bold rounded hover:bg-cyan-400 transition-all shadow-[0_0_15px_rgba(34,211,238,0.4)]">เข้าสู่ระบบ</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dashboard Page -->
+      <div id="page-dashboard" class="absolute inset-0 bg-gray-900/90 flex flex-col items-center justify-center pointer-events-auto backdrop-blur-md transition-opacity duration-300 hidden">
+        <div class="glass-panel p-8 rounded-2xl w-11/12 max-w-2xl max-h-[90vh] overflow-y-auto text-center">
+          <h2 class="text-3xl font-bold text-indigo-400 mb-6 font-['Outfit']">แดชบอร์ดสถิติผู้เล่น</h2>
+          
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+            <div class="bg-black/40 p-4 rounded-lg border border-gray-700">
+              <div class="text-gray-400 text-sm">ผู้เล่นทั้งหมด</div>
+              <div class="text-2xl font-bold text-white" id="dash-total-players">0</div>
+            </div>
+            <div class="bg-black/40 p-4 rounded-lg border border-gray-700">
+              <div class="text-gray-400 text-sm">คะแนนเฉลี่ย</div>
+              <div class="text-2xl font-bold text-yellow-400" id="dash-avg-score">0</div>
+            </div>
+            <div class="bg-black/40 p-4 rounded-lg border border-gray-700">
+              <div class="text-gray-400 text-sm">คะแนนสูงสุด</div>
+              <div class="text-2xl font-bold text-green-400" id="dash-max-score">0</div>
+            </div>
+            <div class="bg-black/40 p-4 rounded-lg border border-gray-700">
+              <div class="text-gray-400 text-sm">คะแนนต่ำสุด</div>
+              <div class="text-2xl font-bold text-red-400" id="dash-min-score">0</div>
+            </div>
+          </div>
+
+          <div class="text-left bg-black/30 rounded-lg p-4 max-h-48 overflow-y-auto mb-6">
+            <table class="w-full text-white">
+              <thead class="text-gray-400 border-b border-gray-700">
+                <tr>
+                  <th class="py-2">อันดับ</th>
+                  <th class="py-2">ชื่อ</th>
+                  <th class="py-2">คะแนน</th>
+                  <th class="py-2">เหรียญ</th>
+                </tr>
+              </thead>
+              <tbody id="dash-leaderboard-body">
+                <!-- Data populated by JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <button id="btn-dash-back" class="px-8 py-3 bg-gray-700 text-white font-bold rounded-lg hover:bg-gray-600 transition-all text-xl border border-gray-600">กลับ</button>
+        </div>
+      </div>
+
+      <!-- Register Page -->
+      <div id="page-register" class="absolute inset-0 bg-gray-900/90 flex flex-col items-center justify-center pointer-events-auto backdrop-blur-md transition-opacity duration-300 hidden">
+        <div class="glass-panel p-8 rounded-2xl w-11/12 max-w-md">
+          <h2 class="text-3xl font-bold text-white mb-6 font-['Outfit'] text-center">ลงทะเบียนผู้เล่น</h2>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-gray-300 mb-1">รหัสนักเรียน/นักศึกษา</label>
+              <input type="text" id="input-id" class="w-full bg-gray-800 text-white rounded p-3 border border-gray-700 focus:border-cyan-500 focus:outline-none text-lg" placeholder="เช่น 6400001">
+            </div>
+            <div>
+              <label class="block text-gray-300 mb-1">ชื่อ - นามสกุล</label>
+              <input type="text" id="input-name" class="w-full bg-gray-800 text-white rounded p-3 border border-gray-700 focus:border-cyan-500 focus:outline-none text-lg" placeholder="สมชาย ใจดี">
+            </div>
+            <div>
+              <label class="block text-gray-300 mb-1">ชั้นเรียน / กลุ่มเรียน</label>
+              <input type="text" id="input-class" class="w-full bg-gray-800 text-white rounded p-3 border border-gray-700 focus:border-cyan-500 focus:outline-none text-lg" placeholder="ม.5/1 หรือ Section 1">
+            </div>
+            <div>
+              <label class="block text-gray-300 mb-1">ชื่อเล่น (แสดงในเกม)</label>
+              <input type="text" id="input-nickname" class="w-full bg-gray-800 text-white rounded p-3 border border-gray-700 focus:border-cyan-500 focus:outline-none text-lg" placeholder="Somchai">
+            </div>
+            <div>
+              <label class="block text-gray-300 mb-1">รหัสผ่าน (สำหรับเข้าสู่ระบบครั้งต่อไป)</label>
+              <input type="password" id="input-password" class="w-full bg-gray-800 text-white rounded p-3 border border-gray-700 focus:border-cyan-500 focus:outline-none text-lg" placeholder="ตั้งรหัสผ่าน">
+            </div>
+          </div>
+          <p id="register-error" class="text-red-400 mt-4 text-center hidden">กรุณากรอกข้อมูลให้ครบถ้วน หรือ ไอดีนี้มีคนใช้แล้ว!</p>
+          <p id="register-success" class="text-green-400 mt-4 text-center hidden">สมัครสมาชิกสำเร็จ! กำลังเข้าสู่ระบบ...</p>
+          <div class="mt-8 flex gap-4">
+            <button id="btn-back-to-start" class="flex-1 py-3 bg-gray-700 text-white font-bold rounded hover:bg-gray-600 transition-all">กลับ</button>
+            <button id="btn-start-game" class="flex-1 py-3 bg-cyan-500 text-gray-900 font-bold rounded hover:bg-cyan-400 transition-all shadow-[0_0_15px_rgba(34,211,238,0.4)]">ลงทะเบียน</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tutorial Page -->
+      <div id="page-tutorial" class="absolute inset-0 bg-gray-900/90 flex flex-col items-center justify-center pointer-events-auto backdrop-blur-md transition-opacity duration-300 hidden">
+        <div class="glass-panel p-8 rounded-2xl w-11/12 max-w-2xl max-h-[90vh] overflow-y-auto">
+          <h2 class="text-3xl font-bold text-cyan-400 mb-6 font-['Outfit'] text-center">วิธีเล่น (How to Play)</h2>
+          
+          <div class="space-y-6 text-gray-300 text-lg">
+            <div>
+              <h3 class="text-xl font-bold text-white mb-2">🎯 เป้าหมายของเกม</h3>
+              <p>ตามหากล่องข้อมูลในโลกดิจิทัล และตอบคำถามให้ถูกต้องเพื่อปลดล็อกรหัสผ่าน คุณต้องตอบให้ถูกให้ครบตามจำนวนที่กำหนดเพื่อผ่านด่าน!</p>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-white mb-2">🎮 การควบคุม</h3>
+              <p>- บนคอมพิวเตอร์: กด <b>W A S D</b> หรือ <b>ลูกศร</b> เพื่อเดิน, ใช้ <b>เมาส์</b> หมุนมุมกล้อง</p>
+              <p>- บนมือถือ: ใช้ <b>ปุ่มจอยสติ๊ก</b> บนหน้าจอเพื่อเดินและหมุนมุมกล้อง</p>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-white mb-2">❤️ เงื่อนไขการแพ้/ชนะ</h3>
+              <p>- คุณมีพลังชีวิต (หัวใจ) 3 ดวง หากตอบผิดจะเสีย 1 ดวง</p>
+              <p>- ระวังไวรัส (กล่องสีแดง) ที่คอยวิ่งตาม หากโดนชนจะเสียหัวใจเช่นกัน</p>
+              <p>- เกมจบลงเมื่อหัวใจหมด (Game Over) หรือตอบคำถามครบตามเป้าหมาย (Victory!)</p>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-white mb-2">🏅 รางวัล</h3>
+              <p>ตอบคำถามเร็วและถูกต้อง จะได้รับคะแนนสูงขึ้น หากผ่านด่านที่ยากขึ้นจะได้รับเหรียญรางวัลระดับสูง!</p>
+            </div>
+          </div>
+
+          <div class="mt-8 text-center">
+            <button id="btn-tutorial-back" class="px-8 py-3 bg-cyan-500 text-gray-900 font-bold rounded-lg hover:bg-cyan-400 transition-all text-xl">เข้าใจแล้ว</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Game HUD (Heads Up Display) -->
+      <div id="page-game-hud" class="absolute inset-0 pointer-events-none flex flex-col justify-between hidden">
+        <!-- Top Bar -->
+        <div class="w-full flex justify-between items-start p-4 bg-gradient-to-b from-black/80 to-transparent">
+          <!-- Lives & Score -->
+          <div>
+            <div id="hud-lives" class="flex gap-1 mb-2 text-2xl drop-shadow-md">
+              ❤️ ❤️ ❤️
+            </div>
+            <div class="text-xl font-bold text-yellow-400 drop-shadow-md font-['Outfit']">SCORE: <span id="hud-score">0</span></div>
+          </div>
+          
+          <!-- Progress -->
+          <div class="flex flex-col items-end w-1/3 max-w-[200px]">
+            <div class="text-white font-bold mb-1 drop-shadow-md text-right">ภารกิจ: <span id="hud-progress-text">0/10</span></div>
+            <div class="w-full h-3 bg-gray-700 rounded-full overflow-hidden border border-gray-600">
+              <div id="hud-progress-bar" class="h-full bg-cyan-400 w-0 transition-all duration-300"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Skills UI -->
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex space-x-4 pointer-events-auto">
+          <!-- Skill J (Claw) -->
+          <div class="relative w-16 h-16 bg-gray-800/80 border-2 border-gray-600 rounded-lg flex items-center justify-center shadow-lg">
+            <span class="text-white font-bold text-xl">J</span>
+            <div class="absolute top-1 right-1 text-xs text-gray-400 font-bold bg-black/50 px-1 rounded">5s</div>
+            <!-- Cooldown Overlay -->
+            <div id="cd-j" class="absolute inset-0 bg-black/70 rounded-lg flex items-center justify-center hidden">
+              <span id="cd-j-text" class="text-white font-bold text-xl"></span>
+            </div>
+            <!-- Skill Name -->
+            <div class="absolute -bottom-6 w-full text-center text-xs text-purple-300 font-bold drop-shadow-md">CLAW</div>
+          </div>
+          
+          <!-- Skill K (Ultimate) -->
+          <div class="relative w-16 h-16 bg-gray-800/80 border-2 border-purple-500 rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(168,85,247,0.5)]">
+            <span class="text-white font-bold text-xl">K</span>
+            <div class="absolute top-1 right-1 text-xs text-gray-400 font-bold bg-black/50 px-1 rounded">20s</div>
+            <!-- Cooldown Overlay -->
+            <div id="cd-k" class="absolute inset-0 bg-black/70 rounded-lg flex items-center justify-center hidden">
+              <span id="cd-k-text" class="text-white font-bold text-xl"></span>
+            </div>
+            <!-- Skill Name -->
+            <div class="absolute -bottom-6 w-full text-center text-xs text-pink-400 font-bold drop-shadow-md">ULTIMATE</div>
+          </div>
+          
+          <!-- Dash (Shift) -->
+          <div class="relative w-16 h-16 bg-gray-800/80 border-2 border-blue-500 rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(59,130,246,0.5)]">
+            <span class="text-white font-bold text-sm">SHIFT</span>
+            <!-- Cooldown Overlay -->
+            <div id="cd-shift" class="absolute inset-0 bg-black/70 rounded-lg flex items-center justify-center hidden"></div>
+            <!-- Skill Name -->
+            <div class="absolute -bottom-6 w-full text-center text-xs text-blue-300 font-bold drop-shadow-md">DASH</div>
+          </div>
+        </div>
+
+        <!-- Crosshair -->
+        <div id="crosshair" class="absolute top-1/2 left-1/2 w-4 h-4 -mt-2 -ml-2 border-2 border-white/50 rounded-full flex items-center justify-center hidden">
+          <div class="w-1 h-1 bg-white rounded-full"></div>
+        </div>
+
+        <!-- Touch Controls (Mobile Only) - Will be shown via JS -->
+        <div id="touch-controls" class="w-full p-4 flex justify-between items-end pb-8 hidden pointer-events-auto">
+          <!-- Move Joystick Area (Left) -->
+          <div id="joystick-move" class="w-32 h-32 bg-white/10 rounded-full border border-white/20 relative">
+             <div id="joystick-move-knob" class="w-12 h-12 bg-white/40 rounded-full absolute top-1/2 left-1/2 -mt-6 -ml-6"></div>
+          </div>
+          <!-- Look Area (Right screen handles look implicitly, but we can put a jump button here if needed) -->
+        </div>
+      </div>
+
+      <!-- Quiz Modal -->
+      <div id="page-quiz" class="absolute inset-0 bg-black/60 flex flex-col items-center justify-center pointer-events-auto backdrop-blur-md hidden z-50">
+        <div class="glass-panel p-6 sm:p-8 rounded-2xl w-11/12 max-w-3xl transform transition-transform scale-95" id="quiz-container">
+           <!-- Content populated by JS -->
+        </div>
+      </div>
+
+      <!-- Result Page -->
+      <div id="page-result" class="absolute inset-0 bg-gray-900/95 flex flex-col items-center justify-center pointer-events-auto backdrop-blur-lg hidden">
+        <div class="text-center">
+          <h1 id="result-title" class="text-6xl font-black text-cyan-400 mb-2 font-['Outfit'] drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]">MISSION COMPLETE</h1>
+          <h2 class="text-2xl text-gray-300 mb-8" id="result-player-name">สมชาย ใจดี</h2>
+          
+          <div class="grid grid-cols-2 gap-4 text-left max-w-md mx-auto mb-8 bg-black/30 p-6 rounded-xl border border-gray-700">
+            <div class="text-gray-400">คะแนนรวม:</div>
+            <div class="text-white font-bold text-right" id="result-score">1500 / 2000</div>
+            
+            <div class="text-gray-400">ความถูกต้อง:</div>
+            <div class="text-white font-bold text-right" id="result-percent">75%</div>
+            
+            <div class="text-gray-400">ตอบถูก:</div>
+            <div class="text-green-400 font-bold text-right" id="result-correct">8 ข้อ</div>
+            
+            <div class="text-gray-400">ตอบผิด:</div>
+            <div class="text-red-400 font-bold text-right" id="result-wrong">2 ข้อ</div>
+            
+            <div class="text-gray-400">เวลาที่ใช้:</div>
+            <div class="text-white font-bold text-right" id="result-time">02:35 นาที</div>
+            
+            <div class="text-gray-400">เหรียญรางวัล:</div>
+            <div class="text-yellow-400 font-bold text-right text-xl" id="result-badge">🥈 Silver</div>
+          </div>
+          
+          <p class="text-gray-400 mb-8 max-w-md mx-auto px-4" id="result-feedback">"เก่งมาก! คุณมีความเข้าใจในเรื่องความปลอดภัยทางไซเบอร์ในระดับที่ดี ลองทบทวนเรื่อง Phishing อีกนิดนะ"</p>
+
+          <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <button id="btn-result-restart" class="px-8 py-3 bg-cyan-500 text-gray-900 font-bold rounded-lg hover:bg-cyan-400 transition-all text-xl">เล่นอีกครั้ง</button>
+            <button id="btn-result-home" class="px-8 py-3 bg-gray-700 text-white font-bold rounded-lg hover:bg-gray-600 transition-all text-xl border border-gray-600">กลับหน้าหลัก</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
