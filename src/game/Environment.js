@@ -66,7 +66,7 @@ export class Environment {
 
     createGround() {
         const textureLoader = new THREE.TextureLoader();
-        const grassTex = textureLoader.load('textures/grass.jpg');
+        const grassTex = textureLoader.load('./public/textures/grass.jpg');
         grassTex.wrapS = THREE.RepeatWrapping;
         grassTex.wrapT = THREE.RepeatWrapping;
         grassTex.repeat.set(50, 50);
@@ -106,7 +106,7 @@ export class Environment {
         if (Math.abs(x) < 10 && Math.abs(z) < 10) return;
 
         const textureLoader = new THREE.TextureLoader();
-        const barkTex = textureLoader.load('textures/bark.jpg');
+        const barkTex = textureLoader.load('./public/textures/bark.jpg');
         barkTex.wrapS = THREE.RepeatWrapping;
         barkTex.wrapT = THREE.RepeatWrapping;
         barkTex.repeat.set(1, 2);
@@ -146,7 +146,7 @@ export class Environment {
         if (Math.abs(x) < 10 && Math.abs(z) < 10) return;
 
         const textureLoader = new THREE.TextureLoader();
-        const rockTex = textureLoader.load('textures/rock.jpg');
+        const rockTex = textureLoader.load('./public/textures/rock.jpg');
         rockTex.wrapS = THREE.RepeatWrapping;
         rockTex.wrapT = THREE.RepeatWrapping;
         rockTex.repeat.set(2, 2);
