@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import questionsData from '../data/questions.json';
+import questionsData from '../data/questions.js';
 
 export class QuizManager {
     constructor(scene, player, uiManager) {

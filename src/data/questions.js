@@ -1,4 +1,4 @@
-[
+export default [
   {
     "id": 1,
     "category": "HTML",
@@ -149,4 +149,4 @@
     "answer": 2,
     "explanation": "เหตุการณ์ onclick จะถูกเรียกใช้ (Trigger) เมื่อผู้ใช้คลิกเมาส์ที่องค์ประกอบนั้นๆ"
   }
-]
+];
