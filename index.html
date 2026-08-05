@@ -9,6 +9,29 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="./src/style.css">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {}
+        }
+      }
+    </script>
+
+    <!-- Three.js Import Map -->
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+      }
+    </script>
   </head>
   <body class="bg-gray-900 text-white font-['Inter'] overflow-hidden selection:bg-purple-500 selection:text-white">
     <!-- Game Canvas Container -->
@@ -20,7 +43,7 @@
       <!-- Start Page -->
       <div id="page-start" class="absolute inset-0 bg-gray-900/90 flex flex-col items-center justify-center pointer-events-auto backdrop-blur-md transition-opacity duration-300">
         <!-- Logo Image with Glowing Border -->
-        <img src="/logo.png" alt="Cat Hunter Logo" class="w-11/12 max-w-md mb-8 rounded-3xl border-4 border-cyan-400 shadow-[0_0_30px_rgba(34,211,238,0.8)] object-contain bg-black/50 p-2">
+        <img src="./logo.png" alt="Cat Hunter Logo" class="w-11/12 max-w-md mb-8 rounded-3xl border-4 border-cyan-400 shadow-[0_0_30px_rgba(34,211,238,0.8)] object-contain bg-black/50 p-2">
         
         <p class="text-center text-gray-400 max-w-md mb-8 text-lg px-4">หลบหนีออกจากโลกดิจิทัลโดยการตอบคำถามเพื่อปลดล็อกรหัสผ่านของระบบ!</p>
         <div id="guest-buttons" class="flex flex-col sm:flex-row gap-4 mb-4">
@@ -292,6 +315,6 @@
 
     </div>
 
-    <script type="module" src="/src/main.js"></script>
+    <script type="module" src="./src/main.js"></script>
   </body>
 </html>
